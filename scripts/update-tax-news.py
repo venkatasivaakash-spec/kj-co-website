@@ -14,12 +14,12 @@ def fetch(url):
         return r.read().decode("utf-8", "ignore")
 
 def clean(s):
-    return re.sub(r"\\s+", " ", BeautifulSoup(s, "html.parser").get_text(" ", strip=True)).strip()
+    return re.sub(r"\s+", " ", BeautifulSoup(s, "html.parser").get_text(" ", strip=True)).strip()
 
 def income_items():
     soup = BeautifulSoup(fetch(INCOME_URL), "html.parser")
     text = soup.get_text("\n", strip=True)
-    pattern = re.compile(r"(\\d{2}-[A-Za-z]{3}-\\d{4})\\s+(.*?)(?=\\d{2}-[A-Za-z]{3}-\\d{4}|$)", re.S)
+    pattern = re.compile(r"(\d{2}-[A-Za-z]{3}-\d{4})\s+(.*?)(?=\d{2}-[A-Za-z]{3}-\d{4}|$)", re.S)
     items=[]
     for m in pattern.finditer(text):
         date, desc = m.groups()
@@ -38,12 +38,12 @@ def income_items():
 def cbic_items():
     soup = BeautifulSoup(fetch(CBIC_URL), "html.parser")
     text = soup.get_text("\n", strip=True)
-    chunks = re.findall(r"“?\\s*([^“”\\n]+?\\d{2}\\.\\d{2}\\.2026[^“”\\n]*)[”]?", text)
+    chunks = re.findall(r"“?\s*([^“”\n]+?\d{2}\.\d{2}\.2026[^“”\n]*)[”]?", text)
     items=[]
     for desc in chunks:
         desc=clean(desc)
         if len(desc)<35: continue
-        m=re.search(r"(\\d{2}\\.\\d{2}\\.2026)", desc)
+        m=re.search(r"(\d{2}\.\d{2}\.2026)", desc)
         date=m.group(1) if m else "2026"
         items.append({"date":date, "category":"GST / CBIC", "title":desc[:150], "summary":desc, "url":CBIC_URL})
     seen=set(); out=[]

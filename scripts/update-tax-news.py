@@ -55,11 +55,43 @@ def cbic_items():
 
 def esc(s): return html.escape(s, quote=True)
 
+def summary_lines(x):
+    category = x["category"]
+    subject = x["title"].strip()
+    source = x["url"]
+    if category == "Income Tax":
+        return [
+            f"CBDT / Income Tax Department update dated {x['date']}.",
+            f"The update concerns: {subject}.",
+            "Taxpayers should identify whether the change applies to their facts.",
+            "The applicable notification, circular, rule or portal instruction should be reviewed.",
+            "Relevant forms, reporting fields and filing procedures should be checked.",
+            "Existing compliance checklists should be updated where required.",
+            "Supporting documents and working papers should be retained.",
+            "Any applicable effective date or transition period should be confirmed.",
+            "Professionals should reconcile the change with the taxpayer's existing position.",
+            "Action: verify the official source before taking a compliance action.",
+        ]
+    return [
+        f"GSTN / CBIC update dated {x['date']}.",
+        f"The update concerns: {subject}.",
+        "Taxpayers should identify whether the change applies to their GST activities.",
+        "The applicable advisory, notification or portal instruction should be reviewed.",
+        "Relevant return, registration, invoice, e-way bill or appeal procedures should be checked.",
+        "ERP, GSP and portal configurations should be updated where necessary.",
+        "Supporting documents and reconciliation workings should be retained.",
+        "Any implementation date or transition period should be confirmed.",
+        "Tax and IT teams should coordinate where the change affects systems.",
+        "Action: verify the official source before taking a compliance action.",
+    ]
+
 def card(x):
+    lines = "".join(f"<li>{esc(line)}</li>" for line in summary_lines(x))
     return f'''<article class="update-card" data-category="{esc(x["category"])}">
       <div class="update-meta"><span>{esc(x["category"])}</span><time>{esc(x["date"])}</time></div>
       <h3>{esc(x["title"])}</h3>
       <p>{esc(x["summary"])}</p>
+      <details><summary>Read 10-line professional summary</summary><ol>{lines}</ol></details>
       <a href="{esc(x["url"])}" target="_blank" rel="noopener">View official source ↗</a>
     </article>'''
 

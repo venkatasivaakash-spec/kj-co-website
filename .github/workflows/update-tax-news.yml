@@ -3,7 +3,8 @@ name: Update GST & Income Tax News
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 22 * * *"
+    - cron: "17 * * * *"
+      timezone: "Asia/Kolkata"
 
 permissions:
   contents: write
